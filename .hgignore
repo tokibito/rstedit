@@ -1,0 +1,13 @@
+syntax: glob
+*.pyc
+*.pyo
+*.swp
+*.exe
+*.dcu
+*.identcache
+*.local
+*.log
+
+syntax: regexp
+^src/__history/
+^src/library\.zip$
