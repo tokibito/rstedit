@@ -53,8 +53,6 @@ object frmMain: TfrmMain
       TabWidth = 2
       WantTabs = True
       OnChange = synEditMainChange
-      RemovedKeystrokes = <>
-      AddedKeystrokes = <>
     end
     object xsplMain: TSpTBXSplitter
       Left = 469
@@ -69,7 +67,7 @@ object frmMain: TfrmMain
       Height = 516
       Align = alClient
       BevelOuter = bvNone
-      TabOrder = 1
+      TabOrder = 0
       object wbPreview: TWebBrowser
         Left = 0
         Top = 0

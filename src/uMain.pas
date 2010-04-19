@@ -6,14 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, PythonEngine, StdCtrls, ActnList, StdActns, Menus, SpTBXItem,
   ExtCtrls, SynEdit, SynMemo, ToolWin, ActnMan, ActnCtrls, ActnMenus,
-  PlatformDefaultStyleActnCtrls, OleCtrls, SHDocVw, SpTBXDkPanels, ActiveX;
-
-const
-{$IFDEF DEBUG}
-  LIB_DIR = '_Lib';
-{$ELSE}
-  LIB_DIR = 'library.zip';
-{$ENDIF}
+  PlatformDefaultStyleActnCtrls, OleCtrls, SHDocVw, SpTBXDkPanels, ActiveX,
+  uConst;
 
 type
   TfrmMain = class(TForm)
