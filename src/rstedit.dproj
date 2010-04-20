@@ -3,7 +3,7 @@
 			<ProjectGuid>{FF2C3F52-4F90-4957-B159-1AE8C7543BA7}</ProjectGuid>
 			<ProjectVersion>12.0</ProjectVersion>
 			<MainSource>rstedit.dpr</MainSource>
-			<Config Condition="'$(Config)'==''">デバッグ</Config>
+			<Config Condition="'$(Config)'==''">リリース</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">

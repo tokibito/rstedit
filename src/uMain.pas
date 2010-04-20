@@ -7,7 +7,7 @@ uses
   Dialogs, PythonEngine, StdCtrls, ActnList, StdActns, Menus, SpTBXItem,
   ExtCtrls, SynEdit, SynMemo, ToolWin, ActnMan, ActnCtrls, ActnMenus,
   PlatformDefaultStyleActnCtrls, OleCtrls, SHDocVw, SpTBXDkPanels, ActiveX,
-  uConst;
+  uConst, ImgList;
 
 type
   TfrmMain = class(TForm)
@@ -28,18 +28,26 @@ type
     pnlPreview: TPanel;
     wbPreview: TWebBrowser;
     timPreview: TTimer;
+    actOpenFile: TFileOpen;
+    actSaveAsFile: TFileSaveAs;
+    imlActionSmallIcon: TImageList;
+    actNewFile: TAction;
     procedure pyeMainAfterInit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pyioMainSendUniData(Sender: TObject; const Data: WideString);
     procedure synEditMainKeyPress(Sender: TObject; var Key: Char);
     procedure synEditMainChange(Sender: TObject);
     procedure timPreviewTimer(Sender: TObject);
+    procedure actOpenFileAccept(Sender: TObject);
+    procedure actSaveAsFileAccept(Sender: TObject);
+    procedure actNewFileExecute(Sender: TObject);
   private
     sPyOut: string;
     function ExecString(Command: string): string;
     procedure SetPreviewContent(Content: string);
     procedure ImportModule(Module: string; Package: string = '');
     function ConvertHTML(Src: string): string;
+    procedure ReloadPreview;
   public
     { Public 宣言 }
   end;
@@ -74,6 +82,42 @@ begin
     cmd := '';
   cmd := cmd + 'import ' + Module;
   ExecString(cmd);
+end;
+
+procedure TfrmMain.ReloadPreview;
+begin
+  (*
+  プレビュー更新のタイマーを有効に
+  *)
+  timPreview.Enabled := True;
+end;
+
+procedure TfrmMain.actNewFileExecute(Sender: TObject);
+begin
+  (*
+  ファイル-新規作成
+  *)
+  synEditMain.Clear;
+  ReloadPreview;
+end;
+
+procedure TfrmMain.actOpenFileAccept(Sender: TObject);
+begin
+  (*
+  ファイル-開く
+  *)
+  // UTF8ファイルとして開く
+  synEditMain.Lines.LoadFromFile(actOpenFile.Dialog.FileName, TEncoding.UTF8);
+  ReloadPreview;
+end;
+
+procedure TfrmMain.actSaveAsFileAccept(Sender: TObject);
+begin
+  (*
+  ファイル-名前を付けて保存
+  *)
+  // UTF8(BOMなし)で保存
+  synEditMain.Lines.SaveToFile(actSaveAsFile.Dialog.FileName, TEncoding.GetEncoding(CP_UTF8));
 end;
 
 function TfrmMain.ConvertHTML(Src: string): string;
@@ -112,7 +156,7 @@ begin
   (*
   編集されたとき
   *)
-  timPreview.Enabled := True;
+  ReloadPreview;
 end;
 
 procedure TfrmMain.synEditMainKeyPress(Sender: TObject; var Key: Char);
