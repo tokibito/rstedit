@@ -9,6 +9,8 @@ const
   LIB_DIR = 'library.zip';
 {$ENDIF}
 
+  TITLE_CAPTION = '%s%s - rstedit';
+
 implementation
 
 end.
