@@ -3,7 +3,7 @@ object frmMain: TfrmMain
   Top = 0
   Caption = 'rstedit'
   ClientHeight = 593
-  ClientWidth = 902
+  ClientWidth = 952
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,26 +15,21 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object xstMain: TSpTBXStatusBar
-    Left = 0
-    Top = 567
-    Width = 902
-    Height = 26
-  end
   object pnlWrapper: TPanel
     Left = 0
     Top = 48
-    Width = 902
-    Height = 519
+    Width = 952
+    Height = 520
     Align = alClient
     BevelEdges = []
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 0
+    ExplicitWidth = 902
     object synEditMain: TSynMemo
       Left = 0
       Top = 0
-      Width = 469
-      Height = 519
+      Width = 489
+      Height = 520
       Align = alLeft
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -60,35 +55,37 @@ object frmMain: TfrmMain
       OnChange = synEditMainChange
     end
     object xsplMain: TSpTBXSplitter
-      Left = 469
+      Left = 489
       Top = 0
-      Height = 519
+      Height = 520
       Cursor = crSizeWE
+      ExplicitLeft = 469
     end
     object pnlPreview: TPanel
-      Left = 474
+      Left = 494
       Top = 0
-      Width = 428
-      Height = 519
+      Width = 458
+      Height = 520
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitLeft = 474
+      ExplicitWidth = 428
       object wbPreview: TWebBrowser
         Left = 0
         Top = 0
-        Width = 428
-        Height = 519
+        Width = 458
+        Height = 520
         TabStop = False
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 40
-        ExplicitTop = 160
-        ExplicitWidth = 300
-        ExplicitHeight = 150
+        ExplicitLeft = 1
+        ExplicitWidth = 428
+        ExplicitHeight = 519
         ControlData = {
-          4C0000003C2C0000A43500000000000000000000000000000000000000000000
+          4C000000562F0000BE3500000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
-          2B2E12620A000000000000004C0000000114020000000000C000000000000046
+          2B2E126203000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
           00000000000000000100000000000000000000000000000000000000}
       end
@@ -97,7 +94,7 @@ object frmMain: TfrmMain
   object mmMain: TActionMainMenuBar
     Left = 0
     Top = 0
-    Width = 902
+    Width = 952
     Height = 22
     UseSystemFont = False
     ActionManager = amMain
@@ -112,11 +109,12 @@ object frmMain: TfrmMain
     Font.Style = []
     PersistentHotKeys = True
     Spacing = 0
+    ExplicitWidth = 902
   end
   object tbMain: TActionToolBar
     Left = 0
     Top = 22
-    Width = 902
+    Width = 952
     Height = 26
     ActionManager = amMain
     Caption = 'tbMain'
@@ -126,6 +124,34 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     Spacing = 0
+    ExplicitWidth = 902
+  end
+  object xsbMain: TSpTBXStatusBar
+    Left = 0
+    Top = 568
+    Width = 952
+    Height = 25
+    ExplicitTop = 567
+    ExplicitWidth = 902
+    object TBControlItem1: TTBControlItem
+      Control = xpnlStatus
+    end
+    object xpnlStatus: TSpTBXPanel
+      Left = 0
+      Top = 0
+      Width = 389
+      Height = 21
+      Caption = 'xpnlStatus'
+      TabOrder = 0
+      Borders = False
+      object xlblStatus: TSpTBXLabel
+        Left = 0
+        Top = 0
+        Width = 6
+        Height = 21
+        Align = alLeft
+      end
+    end
   end
   object pyeMain: TPythonEngine
     InitScript.Strings = (
@@ -294,6 +320,7 @@ object frmMain: TfrmMain
     object actOpenFile: TAction
       Category = #12501#12449#12452#12523
       Caption = #38283#12367'(&O)...'
+      Hint = #38283#12367'|'#26082#23384#12398#12501#12449#12452#12523#12434#38283#12365#12414#12377
       ImageIndex = 2
       ShortCut = 16463
       OnExecute = actOpenFileExecute
@@ -301,6 +328,7 @@ object frmMain: TfrmMain
     object actSave: TAction
       Category = #12501#12449#12452#12523
       Caption = #19978#26360#12365#20445#23384'(&S)'
+      HelpKeyword = #19978#26360#12365#20445#23384'|'#12501#12449#12452#12523#12434#20445#23384#12375#12414#12377
       ImageIndex = 0
       ShortCut = 16467
       OnExecute = actSaveExecute
@@ -609,5 +637,18 @@ object frmMain: TfrmMain
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Left = 188
     Top = 192
+  end
+  object dndMain: TDropFileTarget
+    DragTypes = [dtCopy, dtLink]
+    OnDrop = dndMainDrop
+    Target = Owner
+    OptimizedMove = True
+    Left = 248
+    Top = 192
+  end
+  object appevMain: TApplicationEvents
+    OnHint = appevMainHint
+    Left = 104
+    Top = 248
   end
 end

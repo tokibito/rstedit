@@ -7,13 +7,13 @@ uses
   Dialogs, PythonEngine, StdCtrls, ActnList, StdActns, Menus, SpTBXItem,
   ExtCtrls, SynEdit, SynMemo, ToolWin, ActnMan, ActnCtrls, ActnMenus,
   PlatformDefaultStyleActnCtrls, OleCtrls, SHDocVw, SpTBXDkPanels, ActiveX,
-  uConst, ImgList;
+  uConst, ImgList, DragDrop, DropTarget, DragDropFile, ComCtrls, AppEvnts,
+  TB2Item, SpTBXControls, SynHighlighterRST;
 
 type
   TfrmMain = class(TForm)
     pyeMain: TPythonEngine;
     pyioMain: TPythonInputOutput;
-    xstMain: TSpTBXStatusBar;
     pnlWrapper: TPanel;
     synEditMain: TSynMemo;
     amMain: TActionManager;
@@ -34,6 +34,12 @@ type
     actSave: TAction;
     dlgOpenFile: TOpenDialog;
     actOpenFile: TAction;
+    dndMain: TDropFileTarget;
+    appevMain: TApplicationEvents;
+    xsbMain: TSpTBXStatusBar;
+    xpnlStatus: TSpTBXPanel;
+    TBControlItem1: TTBControlItem;
+    xlblStatus: TSpTBXLabel;
     procedure pyeMainAfterInit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pyioMainSendUniData(Sender: TObject; const Data: WideString);
@@ -46,6 +52,9 @@ type
     procedure actSaveExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure actOpenFileExecute(Sender: TObject);
+    procedure dndMainDrop(Sender: TObject; ShiftState: TShiftState;
+      APoint: TPoint; var Effect: Integer);
+    procedure appevMainHint(Sender: TObject);
   private
     sPyOut: string;
     sCurrentFile: string;
@@ -58,6 +67,7 @@ type
     procedure Modify;
     procedure ClearModified;
     procedure SaveFile;
+    procedure LoadFile;
     function CheckModifyAndSave: Boolean;
   public
     { Public 宣言 }
@@ -123,6 +133,8 @@ begin
   Modified := True;
   // タイトルバーの表示を変える
   Caption := Format(TITLE_CAPTION, [sCurrentFile, ' *']);
+  // 上書き保存を有効にする
+  actSave.Enabled := True;
 end;
 
 procedure TfrmMain.ClearModified;
@@ -133,6 +145,8 @@ begin
   Modified := False;
   // タイトルバーの表示を変える
   Caption := Format(TITLE_CAPTION, [sCurrentFile, '']);
+  // 上書き保存を無効にする
+  actSave.Enabled := False;
 end;
 
 procedure TfrmMain.SaveFile;
@@ -142,6 +156,15 @@ begin
   *)
   // UTF8(BOMなし)で保存
   synEditMain.Lines.SaveToFile(sCurrentFile, TEncoding.GetEncoding(CP_UTF8));
+end;
+
+procedure TfrmMain.LoadFile;
+begin
+  (*
+  エディタにファイルを読み込む
+  *)
+  // UTF8ファイルとして開く
+  synEditMain.Lines.LoadFromFile(sCurrentFile, TEncoding.UTF8);
 end;
 
 function TfrmMain.CheckModifyAndSave: Boolean;
@@ -210,8 +233,7 @@ begin
   if dlgOpenFile.Execute then
   begin
     sCurrentFile := dlgOpenFile.FileName;
-    // UTF8ファイルとして開く
-    synEditMain.Lines.LoadFromFile(sCurrentFile, TEncoding.UTF8);
+    LoadFile;
     ClearModified;
     ReloadPreview;
   end;
@@ -248,6 +270,14 @@ begin
   end;
   SaveFile;
   ClearModified;
+end;
+
+procedure TfrmMain.appevMainHint(Sender: TObject);
+begin
+  (*
+  カーソル位置のヒント
+  *)
+  xlblStatus.Caption := Application.Hint;
 end;
 
 procedure TfrmMain.SetPreviewContent(Content: string);
@@ -317,10 +347,26 @@ begin
   *)
   // PythonEngineの実行結果を保持する変数
   sPyOut := '';
+  // シンタックスハイライト
+  synEditMain.Highlighter := TSynHilighterRST.Create(Self);
   // 現在開いているファイル
   sCurrentFile := '';
   // 新規作成
   actNewFileExecute(Sender);
+end;
+
+procedure TfrmMain.dndMainDrop(Sender: TObject; ShiftState: TShiftState;
+  APoint: TPoint; var Effect: Integer);
+begin
+  (*
+  フォームにファイルをD&D
+  *)
+  if not CheckModifyAndSave then
+    Exit;
+  sCurrentFile := dndMain.Files[0];
+  LoadFile;
+  ClearModified;
+  ReloadPreview;
 end;
 
 procedure TfrmMain.pyeMainAfterInit(Sender: TObject);

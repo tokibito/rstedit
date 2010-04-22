@@ -5,7 +5,8 @@ uses
   SysUtils,
   Forms,
   uMain in 'uMain.pas' {frmMain},
-  uConst in 'uConst.pas';
+  uConst in 'uConst.pas',
+  SynHighlighterRST in 'SynHighlighterRST.pas';
 
 {$R *.res}
 

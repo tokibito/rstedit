@@ -47,6 +47,7 @@
 				<Form>frmMain</Form>
 			</DCCReference>
 			<DCCReference Include="uConst.pas"/>
+			<DCCReference Include="SynHighlighterRST.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
