@@ -1,0 +1,23 @@
+a:hover {
+  color: #FF0000;
+}
+
+h1.title {
+  color: #FFFFFF;
+  background-color: #2F5882;
+}
+
+.section h1 {
+  font-size: medium;
+  border-left: solid 0.5em #FF993E;
+  padding: 0.5em 0 0.5em 1em;
+}
+
+table.docinfo {
+  border: solid 0.2em #F1F7FC;
+  background-color: #E8F0F9;
+}
+
+#contents .topic-title {
+  border-bottom: solid 0.1em #328BD3;
+}
