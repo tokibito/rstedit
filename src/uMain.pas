@@ -8,7 +8,7 @@ uses
   ExtCtrls, SynEdit, SynMemo, ToolWin, ActnMan, ActnCtrls, ActnMenus,
   PlatformDefaultStyleActnCtrls, OleCtrls, SHDocVw, SpTBXDkPanels, ActiveX,
   uConst, ImgList, DragDrop, DropTarget, DragDropFile, ComCtrls, AppEvnts,
-  TB2Item, SpTBXControls, SynHighlighterRST;
+  TB2Item, SpTBXControls, SynHighlighterRST, StrUtils;
 
 type
   TfrmMain = class(TForm)
@@ -40,6 +40,7 @@ type
     xpnlStatus: TSpTBXPanel;
     TBControlItem1: TTBControlItem;
     xlblStatus: TSpTBXLabel;
+    actExportAsHTML: TFileSaveAs;
     procedure pyeMainAfterInit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pyioMainSendUniData(Sender: TObject; const Data: WideString);
@@ -55,6 +56,8 @@ type
     procedure dndMainDrop(Sender: TObject; ShiftState: TShiftState;
       APoint: TPoint; var Effect: Integer);
     procedure appevMainHint(Sender: TObject);
+    procedure actExportAsHTMLAccept(Sender: TObject);
+    procedure actExportAsHTMLBeforeExecute(Sender: TObject);
   private
     sPyOut: string;
     sCurrentFile: string;
@@ -69,6 +72,7 @@ type
     procedure SaveFile;
     procedure LoadFile;
     function CheckModifyAndSave: Boolean;
+    function EscapePythonString(Src: string): string;
   public
     { Public 宣言 }
   end;
@@ -118,10 +122,33 @@ begin
   timPreview.Enabled := True;
 end;
 
+function TfrmMain.EscapePythonString(Src: string): string;
+var
+  i: Integer;
+  sBuffer: string;
+const
+  ESCAPE_CHARS :array [0..1] of string = ('\', '"');
+begin
+  (*
+  Pythonエンジンへ渡す文字列のエスケープ
+  *)
+  sBuffer := '';
+  for i := 0 to Length(Src) - 1 do
+  begin
+    if MatchStr(MidStr(Src, i + 1, 1), ESCAPE_CHARS) then
+      sBuffer := sBuffer + '\';
+    sBuffer := sBuffer + MidStr(Src, i + 1, 1);
+  end;
+  Result := sBuffer;
+end;
+
 function TfrmMain.ConvertHTML(Src: string): string;
 begin
+  (*
+  RSTをHTMLへコンバート
+  *)
   Result := ExecString('sys.stdout.write(_rstedit.convert("""'
-      + StringReplace(Src, #13#10, '\n', [rfReplaceAll])
+      + StringReplace(EscapePythonString(Src), #13#10, '\n', [rfReplaceAll])
       + '"""))');
 end;
 
@@ -206,6 +233,29 @@ end;
 // イベント
 //
 ///////////////////////////////////////////////////////////
+procedure TfrmMain.actExportAsHTMLAccept(Sender: TObject);
+var
+  slBuffer: TStringList;
+begin
+  (*
+  エクスポート-HTMLドキュメント
+  *)
+  slBuffer := TStringList.Create;
+  slBuffer.Text := ConvertHTML(synEditMain.Text);
+  // UTF-8で保存
+  slBuffer.SaveToFile(actExportAsHTML.Dialog.FileName, TEncoding.GetEncoding(CP_UTF8));
+end;
+
+procedure TfrmMain.actExportAsHTMLBeforeExecute(Sender: TObject);
+begin
+  (*
+  エクスポート-HTMLドキュメント(事前処理)
+  *)
+  if not CheckModifyAndSave then
+    Exit;
+  actExportAsHTML.Dialog.FileName := ChangeFileExt(sCurrentFile, '.html');
+end;
+
 procedure TfrmMain.actNewFileExecute(Sender: TObject);
 begin
   (*
