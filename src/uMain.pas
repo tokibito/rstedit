@@ -41,6 +41,7 @@ type
     TBControlItem1: TTBControlItem;
     xlblStatus: TSpTBXLabel;
     actExportAsHTML: TFileSaveAs;
+    actExportAsPDF: TFileSaveAs;
     procedure pyeMainAfterInit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pyioMainSendUniData(Sender: TObject; const Data: WideString);
@@ -58,6 +59,8 @@ type
     procedure appevMainHint(Sender: TObject);
     procedure actExportAsHTMLAccept(Sender: TObject);
     procedure actExportAsHTMLBeforeExecute(Sender: TObject);
+    procedure actExportAsPDFBeforeExecute(Sender: TObject);
+    procedure actExportAsPDFAccept(Sender: TObject);
   private
     sPyOut: string;
     sCurrentFile: string;
@@ -66,6 +69,7 @@ type
     procedure SetPreviewContent(Content: string);
     procedure ImportModule(Module: string; Package: string = '');
     function ConvertHTML(Src: string): string;
+    procedure ConvertPDF(Src: string);
     procedure ReloadPreview;
     procedure Modify;
     procedure ClearModified;
@@ -147,9 +151,19 @@ begin
   (*
   RSTをHTMLへコンバート
   *)
-  Result := ExecString('sys.stdout.write(_rstedit.convert("""'
+  Result := ExecString('sys.stdout.write(_rstedit.convert_html("""'
       + StringReplace(EscapePythonString(Src), #13#10, '\n', [rfReplaceAll])
       + '"""))');
+end;
+
+procedure TfrmMain.ConvertPDF(Src: string);
+begin
+  (*
+  RSTをPDFへコンバート
+  *)
+  ExecString('sys.stdout.write(_rstedit.convert_pdf("'
+      + EscapePythonString(Src)
+      + '"))');
 end;
 
 procedure TfrmMain.Modify;
@@ -251,9 +265,33 @@ begin
   (*
   エクスポート-HTMLドキュメント(事前処理)
   *)
-  if not CheckModifyAndSave then
-    Exit;
   actExportAsHTML.Dialog.FileName := ChangeFileExt(sCurrentFile, '.html');
+end;
+
+procedure TfrmMain.actExportAsPDFAccept(Sender: TObject);
+var
+  slBuffer: TStringList;
+  sTmpFile: string;
+begin
+  (*
+  エクスポート-PDFドキュメント
+  *)
+  slBuffer := TStringList.Create;
+  slBuffer.Text := synEditMain.Text;
+  sTmpFile := ChangeFileExt(actExportAsPDF.Dialog.FileName, '.tmp');
+  // UTF-8でテンポラリファイル作成
+  slBuffer.SaveToFile(sTmpFile, TEncoding.GetEncoding(CP_UTF8));
+  ConvertPDF(sTmpFile);
+  // テンポラリファイルを削除
+  DeleteFile(sTmpFile);
+end;
+
+procedure TfrmMain.actExportAsPDFBeforeExecute(Sender: TObject);
+begin
+  (*
+  エクスポート-PDFドキュメント(事前処理)
+  *)
+  actExportAsPDF.Dialog.FileName := ChangeFileExt(sCurrentFile, '.pdf');
 end;
 
 procedure TfrmMain.actNewFileExecute(Sender: TObject);
@@ -437,6 +475,9 @@ begin
   (*
   PythonEngineの標準出力で呼ばれる
   *)
+{$IFDEF DEBUG}
+  OutputDebugString(PChar(Data));
+{$ENDIF}
   sPyOut := sPyOut + Data;
 end;
 
