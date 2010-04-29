@@ -8,7 +8,7 @@ uses
   ExtCtrls, SynEdit, SynMemo, ToolWin, ActnMan, ActnCtrls, ActnMenus,
   PlatformDefaultStyleActnCtrls, OleCtrls, SHDocVw, SpTBXDkPanels, ActiveX,
   uConst, ImgList, DragDrop, DropTarget, DragDropFile, ComCtrls, AppEvnts,
-  TB2Item, SpTBXControls, SynHighlighterRST, StrUtils;
+  TB2Item, SpTBXControls, SynHighlighterRST, StrUtils, uVersion;
 
 type
   TfrmMain = class(TForm)
@@ -42,6 +42,11 @@ type
     xlblStatus: TSpTBXLabel;
     actExportAsHTML: TFileSaveAs;
     actExportAsPDF: TFileSaveAs;
+    actAbout: TAction;
+    pmMain: TPopupMenu;
+    T1: TMenuItem;
+    C1: TMenuItem;
+    P1: TMenuItem;
     procedure pyeMainAfterInit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pyioMainSendUniData(Sender: TObject; const Data: WideString);
@@ -61,6 +66,7 @@ type
     procedure actExportAsHTMLBeforeExecute(Sender: TObject);
     procedure actExportAsPDFBeforeExecute(Sender: TObject);
     procedure actExportAsPDFAccept(Sender: TObject);
+    procedure actAboutExecute(Sender: TObject);
   private
     sPyOut: string;
     sCurrentFile: string;
@@ -247,6 +253,14 @@ end;
 // イベント
 //
 ///////////////////////////////////////////////////////////
+procedure TfrmMain.actAboutExecute(Sender: TObject);
+begin
+  (*
+  ヘルプ-バージョン情報
+  *)
+  frmVersion.ShowModal;
+end;
+
 procedure TfrmMain.actExportAsHTMLAccept(Sender: TObject);
 var
   slBuffer: TStringList;

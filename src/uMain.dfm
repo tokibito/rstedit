@@ -36,6 +36,7 @@ object frmMain: TfrmMain
       Font.Name = #65325#65331' '#12468#12471#12483#12463
       Font.Pitch = fpFixed
       Font.Style = []
+      PopupMenu = pmMain
       TabOrder = 0
       OnKeyPress = synEditMainKeyPress
       Gutter.Font.Charset = DEFAULT_CHARSET
@@ -125,14 +126,14 @@ object frmMain: TfrmMain
     Top = 568
     Width = 952
     Height = 25
-    ExplicitTop = 567
+    ExplicitTop = 548
     object TBControlItem1: TTBControlItem
       Control = xpnlStatus
     end
     object xpnlStatus: TSpTBXPanel
       Left = 0
       Top = 0
-      Width = 389
+      Width = 325
       Height = 21
       Caption = 'xpnlStatus'
       TabOrder = 0
@@ -233,6 +234,13 @@ object frmMain: TfrmMain
                 ShortCut = 16449
               end>
             Caption = #32232#38598'(&E)'
+          end
+          item
+            Items = <
+              item
+                Action = actAbout
+              end>
+            Caption = #12504#12523#12503'(&H)'
           end>
         ActionBar = mmMain
       end
@@ -286,6 +294,8 @@ object frmMain: TfrmMain
             ShortCut = 16470
           end>
         ActionBar = tbMain
+      end
+      item
       end>
     Images = imlActionSmallIcon
     Left = 220
@@ -380,6 +390,12 @@ object frmMain: TfrmMain
       Caption = #32066#20102'(&X)'
       Hint = #32066#20102'|'#12450#12503#12522#12465#12540#12471#12519#12531#12434#32066#20102#12377#12427
       ImageIndex = 8
+    end
+    object actAbout: TAction
+      Category = #12504#12523#12503
+      Caption = #12496#12540#12472#12519#12531#24773#22577'(&A)...'
+      Hint = #12496#12540#12472#12519#12531#24773#22577'|'#12496#12540#12472#12519#12531#24773#22577#12434#34920#31034#12375#12414#12377
+      OnExecute = actAboutExecute
     end
   end
   object timPreview: TTimer
@@ -813,5 +829,18 @@ object frmMain: TfrmMain
     OnHint = appevMainHint
     Left = 104
     Top = 248
+  end
+  object pmMain: TPopupMenu
+    Left = 172
+    Top = 248
+    object T1: TMenuItem
+      Action = actCut
+    end
+    object C1: TMenuItem
+      Action = actCopy
+    end
+    object P1: TMenuItem
+      Action = actPaste
+    end
   end
 end

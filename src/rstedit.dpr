@@ -6,7 +6,8 @@ uses
   Forms,
   uMain in 'uMain.pas' {frmMain},
   uConst in 'uConst.pas',
-  SynHighlighterRST in 'SynHighlighterRST.pas';
+  SynHighlighterRST in 'SynHighlighterRST.pas',
+  uVersion in 'uVersion.pas' {frmVersion};
 
 {$R *.res}
 
@@ -21,5 +22,6 @@ begin
       + ExtractFilePath(Application.ExeName) + LIB_DIR));
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TfrmMain, frmMain);
+  Application.CreateForm(TfrmVersion, frmVersion);
   Application.Run;
 end.
