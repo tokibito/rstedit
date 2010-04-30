@@ -284,17 +284,16 @@ end;
 
 procedure TfrmMain.actExportAsPDFAccept(Sender: TObject);
 var
-  slBuffer: TStringList;
+  ssBuffer: TStringStream;
   sTmpFile: string;
 begin
   (*
   エクスポート-PDFドキュメント
   *)
-  slBuffer := TStringList.Create;
-  slBuffer.Text := synEditMain.Text;
+  ssBuffer := TStringStream.Create(StringReplace(synEditMain.Text, #13#10, #10, [rfReplaceAll]), CP_UTF8);
   sTmpFile := ChangeFileExt(actExportAsPDF.Dialog.FileName, '.tmp');
   // UTF-8でテンポラリファイル作成
-  slBuffer.SaveToFile(sTmpFile, TEncoding.GetEncoding(CP_UTF8));
+  ssBuffer.SaveToFile(sTmpFile);
   ConvertPDF(sTmpFile);
   // テンポラリファイルを削除
   DeleteFile(sTmpFile);
@@ -472,15 +471,21 @@ begin
 end;
 
 procedure TfrmMain.pyeMainAfterInit(Sender: TObject);
+
+  procedure AppendSysPath(Path: string);
+  begin
+    ExecString('sys.path.append("'
+      + StringReplace(ExtractFilePath(Application.ExeName), '\', '\\', [rfReplaceAll])
+      + Path
+      + '".decode("utf-8"))');
+  end;
+
 begin
   (*
-  sys.pathにlibrary.zipを追加する
-  日本語パスは不可
+  sys.pathにmodules,library.zipを追加する
   *)
-  ExecString('sys.path.append("'
-      + StringReplace(ExtractFilePath(Application.ExeName), '\', '\\', [rfReplaceAll])
-      + LIB_DIR
-      + '".decode("utf-8"))');
+  AppendSysPath(MODULES_DIR);
+  AppendSysPath(LIB_DIR);
   ImportModule('_rstedit');
 end;
 

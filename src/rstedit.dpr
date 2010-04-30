@@ -16,10 +16,6 @@ var
 
 begin
   Application.Initialize;
-  // PYTHONPATHにライブラリのディレクトリを追加
-  SetEnvironmentVariable('PYTHONPATH',
-      PChar(ExtractFilePath(Application.ExeName) + 'modules;'
-      + ExtractFilePath(Application.ExeName) + LIB_DIR));
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmVersion, frmVersion);

@@ -126,7 +126,7 @@ object frmMain: TfrmMain
     Top = 568
     Width = 952
     Height = 25
-    ExplicitTop = 548
+    ExplicitTop = 567
     object TBControlItem1: TTBControlItem
       Control = xpnlStatus
     end
@@ -149,7 +149,8 @@ object frmMain: TfrmMain
   end
   object pyeMain: TPythonEngine
     InitScript.Strings = (
-      'import sys')
+      'import sys'
+      'sys.path = []')
     IO = pyioMain
     OnAfterInit = pyeMainAfterInit
     Left = 104

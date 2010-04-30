@@ -8,6 +8,7 @@ const
 {$ELSE}
   LIB_DIR = 'library.zip';
 {$ENDIF}
+  MODULES_DIR = 'modules';
 
   TITLE_CAPTION = '%s%s - rstedit';
   VERSION_NUMBER = '0.1.0';
