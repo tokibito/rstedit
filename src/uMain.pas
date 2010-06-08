@@ -47,6 +47,10 @@ type
     T1: TMenuItem;
     C1: TMenuItem;
     P1: TMenuItem;
+    ActionToolBar1: TActionToolBar;
+    actBold: TAction;
+    actItaric: TAction;
+    actHeading1: TAction;
     procedure pyeMainAfterInit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pyioMainSendUniData(Sender: TObject; const Data: WideString);
@@ -67,6 +71,9 @@ type
     procedure actExportAsPDFBeforeExecute(Sender: TObject);
     procedure actExportAsPDFAccept(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
+    procedure actBoldExecute(Sender: TObject);
+    procedure actItaricExecute(Sender: TObject);
+    procedure actHeading1Execute(Sender: TObject);
   private
     sPyOut: string;
     sCurrentFile: string;
@@ -261,6 +268,20 @@ begin
   frmVersion.ShowModal;
 end;
 
+procedure TfrmMain.actBoldExecute(Sender: TObject);
+var
+  intSelStartBuffer, intSelEndBuffer: Integer;
+begin
+  (*
+  書式-太字
+  *)
+  intSelStartBuffer := synEditMain.SelStart;
+  intSelEndBuffer := synEditMain.SelEnd;
+  synEditMain.SelText := '**' + synEditMain.SelText + '**';
+  synEditMain.SelStart := intSelStartBuffer + 2;
+  synEditMain.SelEnd := intSelEndBuffer + 2;
+end;
+
 procedure TfrmMain.actExportAsHTMLAccept(Sender: TObject);
 var
   slBuffer: TStringList;
@@ -305,6 +326,42 @@ begin
   エクスポート-PDFドキュメント(事前処理)
   *)
   actExportAsPDF.Dialog.FileName := ChangeFileExt(sCurrentFile, '.pdf');
+end;
+
+procedure TfrmMain.actHeading1Execute(Sender: TObject);
+var
+  sBuffer, sCurrent: string;
+begin
+  (*
+  書式-見出し1
+  TODO: 見出しモード
+  *)
+  if synEditMain.LineText <> '' then
+    sCurrent := synEditMain.LineText
+  else
+    sCurrent := '見出し1';
+  // 選択行の上下に入れる(40文字
+  sBuffer := '========================================'#13#10
+      + sCurrent
+      + #13#10'========================================'#13#10#13#10;
+  // 現在行を選択して挿入
+  synEditMain.CaretX := 0;
+  synEditMain.SelEnd := synEditMain.SelStart + Length(synEditMain.LineText);
+  synEditMain.SelText := sBuffer;
+end;
+
+procedure TfrmMain.actItaricExecute(Sender: TObject);
+var
+  intSelStartBuffer, intSelEndBuffer: Integer;
+begin
+  (*
+  書式-斜体
+  *)
+  intSelStartBuffer := synEditMain.SelStart;
+  intSelEndBuffer := synEditMain.SelEnd;
+  synEditMain.SelText := '*' + synEditMain.SelText + '*';
+  synEditMain.SelStart := intSelStartBuffer + 1;
+  synEditMain.SelEnd := intSelEndBuffer + 1;
 end;
 
 procedure TfrmMain.actNewFileExecute(Sender: TObject);
